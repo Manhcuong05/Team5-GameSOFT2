@@ -17,8 +17,8 @@ public class MenuManager : MonoBehaviour
     {
         mainMenu.SetActive(true);
         optionMenu.SetActive(false);
-        storeMenu.SetActive(false);
-        scoreMenu.SetActive(false);
+        storeMenu.SetActive(true);
+        scoreMenu.SetActive(true);
     }
 
     public void ShowOptionMenu()
