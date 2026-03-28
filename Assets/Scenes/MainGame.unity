@@ -1807,13 +1807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 334f66415e19afa44885dfff36254f84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 10
-  jumpForce: 10
-  startJumpForce: 10
-  startDelay: 0
-  wrapOffset: 0.1
-  hatAnchor: {fileID: 1616679679}
-  propellerFlySpeed: 12
+  speed: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
