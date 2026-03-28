@@ -3,8 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
 {
-    public float movementSpeed = 10f;
-
+    public float speed = 10f;
     private Rigidbody2D rb;
     private float movement;
 
@@ -15,25 +14,15 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        // 👉 Giả lập nghiêng điện thoại bằng A/D
-        float fakeTilt = 0f;
-
         if (Input.GetKey(KeyCode.A))
-            fakeTilt = -1f;
+            Debug.Log("A");
 
         if (Input.GetKey(KeyCode.D))
-            fakeTilt = 1f;
-
-        movement = fakeTilt;
-#else
-        // 👉 Mobile thật (nghiêng điện thoại)
-        movement = Input.acceleration.x;
-#endif
+            Debug.Log("D");
     }
 
     void FixedUpdate()
     {
-        rb.velocity = new Vector2(movement * movementSpeed, rb.velocity.y);
+        rb.velocity = new Vector2(movement * speed, rb.velocity.y);
     }
 }
