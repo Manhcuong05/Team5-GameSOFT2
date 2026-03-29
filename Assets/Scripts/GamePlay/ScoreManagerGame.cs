@@ -8,6 +8,7 @@ public class ScoreManagerGame : MonoBehaviour
     public Transform player;
     public TextMeshProUGUI scoreText;
 
+    private float startY;
     private float highestY;
     private int score;
 
@@ -15,7 +16,10 @@ public class ScoreManagerGame : MonoBehaviour
     {
         if (player != null)
         {
+            startY = player.position.y;
             highestY = player.position.y;
+            score = 0;
+            UpdateUI();
         }
     }
 
@@ -28,8 +32,9 @@ public class ScoreManagerGame : MonoBehaviour
         {
             highestY = player.position.y;
 
-            // scale điểm (tùy chỉnh)
-            score = Mathf.FloorToInt(highestY * 10);
+            // tính điểm theo độ cao tăng lên từ vị trí bắt đầu
+            float heightPassed = highestY - startY;
+            score = Mathf.Max(0, Mathf.FloorToInt(heightPassed * 10f));
 
             UpdateUI();
         }
