@@ -1,71 +1,29 @@
 using GoogleMobileAds.Api;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 
 public class AdManager : MonoBehaviour
 {
-    public static AdManager Instance;
-
     private BannerView bannerView;
     private InterstitialAd interstitialAd;
 
-    private bool hasShownInterstitialOnMenu = false;
-    private bool bannerLoaded = false;
-
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-    }
+    // ✅ chỉ show 1 lần toàn game
+    private static bool hasShownInterstitial = false;
 
     void Start()
     {
+        Debug.Log("🚀 Initializing AdMob...");
+
         MobileAds.Initialize(initStatus =>
         {
-            Debug.Log("AdMob Initialized");
+            Debug.Log("✅ AdMob Initialized");
+
+            LoadBanner();
             LoadInterstitial();
         });
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        Debug.Log("Scene loaded: " + scene.name);
-
-        // ✅ CHỈ load banner khi vào menu lần đầu
-        if (scene.name == "MainMenu")
-        {
-            if (!bannerLoaded)
-            {
-                bannerLoaded = true;
-                LoadBanner();
-            }
-            else
-            {
-                ShowBanner(); // đã có thì show lại
-            }
-
-            if (!hasShownInterstitialOnMenu)
-            {
-                hasShownInterstitialOnMenu = true;
-                StartCoroutine(ShowAdWhenReady());
-            }
-        }
     }
 
     // =========================
-    // BANNER (LOAD ĐÚNG THỜI ĐIỂM)
+    // BANNER
     // =========================
     void LoadBanner()
     {
@@ -74,7 +32,6 @@ public class AdManager : MonoBehaviour
         bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Bottom);
 
         AdRequest request = new AdRequest();
-        bannerView.LoadAd(request);
 
         bannerView.OnBannerAdLoaded += () =>
         {
@@ -84,16 +41,10 @@ public class AdManager : MonoBehaviour
 
         bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
         {
-            Debug.Log("❌ Banner Failed: " + error);
+            Debug.LogError("❌ Banner Failed: " + error);
         };
-    }
 
-    void ShowBanner()
-    {
-        if (bannerView != null)
-        {
-            bannerView.Show();
-        }
+        bannerView.LoadAd(request);
     }
 
     // =========================
@@ -101,6 +52,9 @@ public class AdManager : MonoBehaviour
     // =========================
     void LoadInterstitial()
     {
+        // ❌ nếu đã show rồi thì không load nữa
+        if (hasShownInterstitial) return;
+
         string adUnitId = "ca-app-pub-3940256099942544/1033173712";
 
         AdRequest request = new AdRequest();
@@ -109,44 +63,33 @@ public class AdManager : MonoBehaviour
         {
             if (error != null || ad == null)
             {
-                Invoke(nameof(LoadInterstitial), 2f);
+                Debug.LogError("❌ Interstitial Load Failed: " + error);
                 return;
             }
 
+            Debug.Log("✅ Interstitial Loaded");
+
             interstitialAd = ad;
 
-            interstitialAd.OnAdFullScreenContentClosed += () =>
+            // 👉 chỉ show nếu chưa từng show
+            if (!hasShownInterstitial)
             {
-                interstitialAd = null;
-                LoadInterstitial();
-            };
+                hasShownInterstitial = true;
+
+                Debug.Log("🎬 Show Interstitial (ONLY ONCE)");
+                interstitialAd.Show();
+            }
         });
     }
 
-    IEnumerator ShowAdWhenReady()
-    {
-        float timeout = 5f;
-        float timer = 0f;
-
-        while ((interstitialAd == null || !interstitialAd.CanShowAd()) && timer < timeout)
-        {
-            timer += Time.unscaledDeltaTime;
-            yield return null;
-        }
-
-        if (interstitialAd != null && interstitialAd.CanShowAd())
-        {
-            interstitialAd.Show();
-        }
-    }
-
+    // =========================
+    // CLEANUP
+    // =========================
     void OnDestroy()
     {
         if (bannerView != null)
         {
             bannerView.Destroy();
         }
-
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }
