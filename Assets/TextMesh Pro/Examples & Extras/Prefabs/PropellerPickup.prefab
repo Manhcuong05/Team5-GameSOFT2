@@ -145,4 +145,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flyDuration: 2
   flySpeed: 12
-  hatVisualPrefab: {fileID: 2249066079107226909, guid: c389ee5e156e78e4e860efd4fb6a78c6, type: 3}
+  hatVisualPrefab: {fileID: 3576287960443592871, guid: c557eb090e10cd64881b6f1c9a588d12, type: 3}

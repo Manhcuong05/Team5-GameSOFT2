@@ -2,151 +2,151 @@ using GoogleMobileAds.Api;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class AdManager : MonoBehaviour
 {
-private BannerView bannerView;
-private InterstitialAd interstitialAd;
+    public static AdManager Instance;
 
-// tránh spam quảng cáo
-private bool hasShownAd = false;
+    private BannerView bannerView;
+    private InterstitialAd interstitialAd;
 
-void Start()
-{
-    MobileAds.SetRequestConfiguration(
-        new RequestConfiguration
+    private bool hasShownInterstitialOnMenu = false;
+    private bool bannerLoaded = false;
+
+    void Awake()
+    {
+        if (Instance == null)
         {
-            TestDeviceIds = new List<string>()
-            {
-                AdRequest.TestDeviceSimulator
-            }
-        });
-
-    MobileAds.Initialize(initStatus =>
-    {
-        Debug.Log("AdMob Initialized");
-
-        LoadBanner();
-        LoadInterstitial();
-    });
-}
-
-// =========================
-// BANNER
-// =========================
-
-void LoadBanner()
-{
-    string adUnitId = "ca-app-pub-3940256099942544/6300978111";
-
-    if (bannerView != null)
-    {
-        bannerView.Destroy();
-        bannerView = null;
-    }
-
-    bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Bottom);
-
-    AdRequest request = new AdRequest();
-
-    bannerView.LoadAd(request);
-
-    bannerView.OnBannerAdLoaded += () =>
-    {
-        Debug.Log("Banner Loaded");
-    };
-
-    bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
-    {
-        Debug.Log("Banner Failed: " + error);
-    };
-}
-
-// =========================
-// INTERSTITIAL
-// =========================
-
-void LoadInterstitial()
-{
-    string adUnitId = "ca-app-pub-3940256099942544/1033173712";
-
-    AdRequest request = new AdRequest();
-
-    InterstitialAd.Load(adUnitId, request, (InterstitialAd ad, LoadAdError error) =>
-    {
-        if (error != null || ad == null)
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
         {
-            Debug.Log("Interstitial load failed: " + error);
+            Destroy(gameObject);
             return;
         }
+    }
 
-        Debug.Log("Interstitial loaded");
-
-        interstitialAd = ad;
-
-        interstitialAd.OnAdFullScreenContentClosed += () =>
+    void Start()
+    {
+        MobileAds.Initialize(initStatus =>
         {
-            Debug.Log("Ad closed");
-
-            // load interstitial mới
+            Debug.Log("AdMob Initialized");
             LoadInterstitial();
+        });
 
-            // reload banner để tránh banner bị mất
-            ReloadBanner();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene loaded: " + scene.name);
+
+        // ✅ CHỈ load banner khi vào menu lần đầu
+        if (scene.name == "MainMenu")
+        {
+            if (!bannerLoaded)
+            {
+                bannerLoaded = true;
+                LoadBanner();
+            }
+            else
+            {
+                ShowBanner(); // đã có thì show lại
+            }
+
+            if (!hasShownInterstitialOnMenu)
+            {
+                hasShownInterstitialOnMenu = true;
+                StartCoroutine(ShowAdWhenReady());
+            }
+        }
+    }
+
+    // =========================
+    // BANNER (LOAD ĐÚNG THỜI ĐIỂM)
+    // =========================
+    void LoadBanner()
+    {
+        string adUnitId = "ca-app-pub-3940256099942544/6300978111";
+
+        bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Bottom);
+
+        AdRequest request = new AdRequest();
+        bannerView.LoadAd(request);
+
+        bannerView.OnBannerAdLoaded += () =>
+        {
+            Debug.Log("✅ Banner Loaded");
+            bannerView.Show();
         };
 
-        if (!hasShownAd)
+        bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
         {
-            StartCoroutine(ShowAdDelayed());
+            Debug.Log("❌ Banner Failed: " + error);
+        };
+    }
+
+    void ShowBanner()
+    {
+        if (bannerView != null)
+        {
+            bannerView.Show();
         }
-    });
-}
-
-IEnumerator ShowAdDelayed()
-{
-    hasShownAd = true;
-
-    yield return new WaitForSeconds(0.5f);
-
-    if (interstitialAd != null && interstitialAd.CanShowAd())
-    {
-        interstitialAd.Show();
-    }
-}
-
-// =========================
-// SHOW WHEN NEEDED
-// =========================
-
-public void ShowInterstitial()
-{
-    if (interstitialAd != null && interstitialAd.CanShowAd())
-    {
-        interstitialAd.Show();
-    }
-}
-
-// =========================
-// RELOAD BANNER
-// =========================
-
-void ReloadBanner()
-{
-    if (bannerView != null)
-    {
-        bannerView.Destroy();
-        bannerView = null;
     }
 
-    LoadBanner();
-}
-
-void OnDestroy()
-{
-    if (bannerView != null)
+    // =========================
+    // INTERSTITIAL
+    // =========================
+    void LoadInterstitial()
     {
-        bannerView.Destroy();
-    }
-}
+        string adUnitId = "ca-app-pub-3940256099942544/1033173712";
 
+        AdRequest request = new AdRequest();
+
+        InterstitialAd.Load(adUnitId, request, (InterstitialAd ad, LoadAdError error) =>
+        {
+            if (error != null || ad == null)
+            {
+                Invoke(nameof(LoadInterstitial), 2f);
+                return;
+            }
+
+            interstitialAd = ad;
+
+            interstitialAd.OnAdFullScreenContentClosed += () =>
+            {
+                interstitialAd = null;
+                LoadInterstitial();
+            };
+        });
+    }
+
+    IEnumerator ShowAdWhenReady()
+    {
+        float timeout = 5f;
+        float timer = 0f;
+
+        while ((interstitialAd == null || !interstitialAd.CanShowAd()) && timer < timeout)
+        {
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (interstitialAd != null && interstitialAd.CanShowAd())
+        {
+            interstitialAd.Show();
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (bannerView != null)
+        {
+            bannerView.Destroy();
+        }
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 }

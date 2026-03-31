@@ -28,6 +28,10 @@ public class Player : MonoBehaviour
     private float originalGravityScale;
 
     private bool hasStarted = false;
+    private bool isGameOver = false;
+
+    // 👉 expose cho Pickup dùng
+    public bool IsPropellerFlying => isPropellerFlying;
 
     void Awake()
     {
@@ -79,7 +83,7 @@ public class Player : MonoBehaviour
 #endif
 
         WrapScreen();
-        CheckGameOver();
+        CheckGameOver(); // ✅ FIX: gọi hàm này
     }
 
     void FixedUpdate()
@@ -100,22 +104,30 @@ public class Player : MonoBehaviour
     {
         if (isPropellerFlying) return;
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+
+        // 👉 cộng điểm khi nhảy (tuỳ bạn chỉnh)
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddScore(10);
+        }
     }
 
     public void Bounce(float force)
     {
         if (isPropellerFlying) return;
         rb.velocity = new Vector2(rb.velocity.x, force);
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddScore(10);
+        }
     }
 
+    // 🔥 không cho stack propeller
     public void ActivatePropeller(float duration, float flySpeed, GameObject hatVisualPrefab)
     {
-        if (propellerCoroutine != null)
-        {
-            StopCoroutine(propellerCoroutine);
-        }
+        if (isPropellerFlying) return;
 
-        ClearCurrentHatVisual();
         propellerCoroutine = StartCoroutine(PropellerRoutine(duration, flySpeed, hatVisualPrefab));
     }
 
@@ -140,13 +152,7 @@ public class Player : MonoBehaviour
 
     private void SpawnHatVisual(GameObject hatVisualPrefab)
     {
-        if (hatVisualPrefab == null) return;
-
-        if (hatAnchor == null)
-        {
-            Debug.LogWarning("Player: chưa gán hatAnchor.");
-            return;
-        }
+        if (hatVisualPrefab == null || hatAnchor == null) return;
 
         currentHatVisual = Instantiate(hatVisualPrefab, hatAnchor);
         currentHatVisual.transform.localPosition = Vector3.zero;
@@ -193,21 +199,28 @@ public class Player : MonoBehaviour
         }
     }
 
+    // ✅ FIX: thêm lại hàm này
     void CheckGameOver()
     {
-        if (!hasStarted) return; // ❗ tránh chết sớm khi chưa bắt đầu
-
-        if (Camera.main == null) return;
+        if (!hasStarted || Camera.main == null || isGameOver) return;
 
         float cameraY = Camera.main.transform.position.y;
 
         if (transform.position.y < cameraY - 6f)
         {
+            isGameOver = true; // ⭐ CHẶN GỌI LẠI
+
             if (GameManager.Instance != null)
             {
+                int score = GameManager.Instance.GetScore();
+
+                if (GameStatsTracker.instance != null)
+                {
+                    GameStatsTracker.instance.EndGame(score);
+                }
+
                 GameManager.Instance.GameOver();
             }
         }
     }
-    
 }

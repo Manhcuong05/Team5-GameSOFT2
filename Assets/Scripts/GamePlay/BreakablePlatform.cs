@@ -6,8 +6,12 @@ using UnityEngine;
 public class BreakPlatform : MonoBehaviour
 {
     [Header("Break Timing")]
-    public float breakDelay = 0.02f;
+    public float breakDelay = 0.05f;   // delay cho player kịp bounce
     public float breakDuration = 0.2f;
+
+    [Header("Sprites")]
+    public Sprite normalSprite;
+    public Sprite brokenSprite;
 
     [Header("Fake Break Visual")]
     public float shrinkMultiplier = 0.7f;
@@ -22,6 +26,9 @@ public class BreakPlatform : MonoBehaviour
     {
         col = GetComponent<Collider2D>();
         sr = GetComponent<SpriteRenderer>();
+
+        if (normalSprite != null)
+            sr.sprite = normalSprite;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -44,11 +51,14 @@ public class BreakPlatform : MonoBehaviour
         Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
         if (rb == null) return;
 
-        // Chỉ kích hoạt khi player đang rơi xuống
+        // 🔥 chỉ khi đang rơi xuống
         if (rb.velocity.y > 0f) return;
 
-        // Player phải ở phía trên nền
+        // 🔥 phải ở trên platform
         if (player.transform.position.y < transform.position.y) return;
+
+        // ✅ bounce trước
+        player.Bounce();
 
         StartCoroutine(BreakSequence());
     }
@@ -58,6 +68,11 @@ public class BreakPlatform : MonoBehaviour
         if (isBroken) yield break;
         isBroken = true;
 
+        // 🔥 đổi sprite sang broken
+        if (brokenSprite != null)
+            sr.sprite = brokenSprite;
+
+        // 👉 delay để player kịp nhảy
         yield return new WaitForSeconds(breakDelay);
 
         if (col != null)
@@ -81,7 +96,7 @@ public class BreakPlatform : MonoBehaviour
         while (elapsed < breakDuration)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / breakDuration);
+            float t = elapsed / breakDuration;
 
             transform.position = Vector3.Lerp(startPos, endPos, t);
             transform.localScale = Vector3.Lerp(startScale, endScale, t);

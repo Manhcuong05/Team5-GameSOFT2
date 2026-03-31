@@ -1,13 +1,12 @@
 <dependencies>
   <packages>
-    <package>androidx.constraintlayout:constraintlayout:2.1.4</package>
-    <package>com.google.android.gms:play-services-ads:23.4.0</package>
-    <package>com.google.android.ump:user-messaging-platform:3.0.0</package>
+    <package>com.google.android.gms:play-services-ads:22.3.0</package>
+    <package>com.google.android.ump:user-messaging-platform:2.1.0</package>
   </packages>
   <files />
   <settings>
     <setting name="androidAbis" value="armeabi-v7a" />
-    <setting name="bundleId" value="com.DefaultCompany.DoodleJump" />
+    <setting name="bundleId" value="com.team5.doodlejump" />
     <setting name="explodeAars" value="True" />
     <setting name="gradleBuildEnabled" value="True" />
     <setting name="gradlePropertiesTemplateEnabled" value="True" />

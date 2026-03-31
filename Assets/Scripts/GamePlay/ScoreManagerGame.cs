@@ -19,7 +19,14 @@ public class ScoreManagerGame : MonoBehaviour
             startY = player.position.y;
             highestY = player.position.y;
             score = 0;
+
             UpdateUI();
+
+            // 👉 reset score trong GameManager
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.currentScore = 0;
+            }
         }
     }
 
@@ -27,16 +34,21 @@ public class ScoreManagerGame : MonoBehaviour
     {
         if (player == null) return;
 
-        // chỉ cập nhật khi player lên cao hơn
         if (player.position.y > highestY)
         {
             highestY = player.position.y;
 
-            // tính điểm theo độ cao tăng lên từ vị trí bắt đầu
             float heightPassed = highestY - startY;
+
             score = Mathf.Max(0, Mathf.FloorToInt(heightPassed * 10f));
 
             UpdateUI();
+
+            // 👉 QUAN TRỌNG: đồng bộ sang GameManager
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.currentScore = score;
+            }
         }
     }
 
@@ -46,5 +58,11 @@ public class ScoreManagerGame : MonoBehaviour
         {
             scoreText.text = score.ToString();
         }
+    }
+
+    // 👉 cho GameManager lấy nếu cần
+    public int GetScore()
+    {
+        return score;
     }
 }

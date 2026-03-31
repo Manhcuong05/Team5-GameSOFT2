@@ -30,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 5320082658482115926}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.06, y: -4.23, z: 0.035644382}
-  m_LocalScale: {x: 0.54725844, y: 0.47487032, z: 1}
+  m_LocalPosition: {x: -0.8777, y: -2.9281, z: 0.035644382}
+  m_LocalScale: {x: 1.1853695, y: 1.0344949, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -160,6 +160,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 0.02
   breakDuration: 0.2
+  normalSprite: {fileID: -2083608045, guid: 5d082991802995a4da0f357c69438215, type: 3}
+  brokenSprite: {fileID: -49803202, guid: 5d082991802995a4da0f357c69438215, type: 3}
   shrinkMultiplier: 0.7
   rotateAngle: 20
   fallDistance: 0.5

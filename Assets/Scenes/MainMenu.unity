@@ -386,50 +386,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 484290702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &82652764
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 82652766}
-  - component: {fileID: 82652765}
-  m_Layer: 0
-  m_Name: AdManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &82652765
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82652764}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e82e48d8df33471489928b060d74d94a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &82652766
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82652764}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 104.08081, y: 946.0836, z: 323.86075}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &172342987
 GameObject:
   m_ObjectHideFlags: 0
@@ -2079,8 +2035,8 @@ Transform:
   m_GameObject: {fileID: 755382447}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.7485787, y: -1.1757663, z: 0.03213046}
-  m_LocalScale: {x: 0.7287215, y: 0.9801357, z: 1}
+  m_LocalPosition: {x: 0.7479, y: -1.1648, z: 0.03213046}
+  m_LocalScale: {x: 0.8871634, y: 0.97802544, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 484290702}
@@ -6134,4 +6090,3 @@ SceneRoots:
   - {fileID: 844241558}
   - {fileID: 1037975241}
   - {fileID: 796773301}
-  - {fileID: 82652766}
