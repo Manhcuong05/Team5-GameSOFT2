@@ -6,7 +6,7 @@ public class AdManager : MonoBehaviour
     private BannerView bannerView;
     private InterstitialAd interstitialAd;
 
-    // ✅ chỉ show 1 lần toàn game
+    //chỉ show 1 lần toàn game
     private static bool hasShownInterstitial = false;
 
     void Start()
@@ -15,16 +15,12 @@ public class AdManager : MonoBehaviour
 
         MobileAds.Initialize(initStatus =>
         {
-            Debug.Log("✅ AdMob Initialized");
-
             LoadBanner();
             LoadInterstitial();
         });
     }
 
-    // =========================
     // BANNER
-    // =========================
     void LoadBanner()
     {
         string adUnitId = "ca-app-pub-3940256099942544/6300978111";
@@ -35,24 +31,21 @@ public class AdManager : MonoBehaviour
 
         bannerView.OnBannerAdLoaded += () =>
         {
-            Debug.Log("✅ Banner Loaded");
             bannerView.Show();
         };
 
         bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
         {
-            Debug.LogError("❌ Banner Failed: " + error);
+            
         };
 
         bannerView.LoadAd(request);
     }
 
-    // =========================
     // INTERSTITIAL
-    // =========================
     void LoadInterstitial()
     {
-        // ❌ nếu đã show rồi thì không load nữa
+        //nếu đã show rồi thì không load nữa
         if (hasShownInterstitial) return;
 
         string adUnitId = "ca-app-pub-3940256099942544/1033173712";
@@ -63,15 +56,12 @@ public class AdManager : MonoBehaviour
         {
             if (error != null || ad == null)
             {
-                Debug.LogError("❌ Interstitial Load Failed: " + error);
                 return;
             }
 
-            Debug.Log("✅ Interstitial Loaded");
-
             interstitialAd = ad;
 
-            // 👉 chỉ show nếu chưa từng show
+            //chỉ show nếu chưa từng show
             if (!hasShownInterstitial)
             {
                 hasShownInterstitial = true;
@@ -82,9 +72,7 @@ public class AdManager : MonoBehaviour
         });
     }
 
-    // =========================
     // CLEANUP
-    // =========================
     void OnDestroy()
     {
         if (bannerView != null)
