@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "926754700265",
+    "project_id": "doodle-jump-e1831",
+    "storage_bucket": "doodle-jump-e1831.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926754700265:android:3a9b482dabf06136976978",
+        "android_client_info": {
+          "package_name": "com.team5.doodlejump"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "926754700265-d8t4jo1j572ku597iple78pt3mrd6npq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3vSMS2HdxGiVR6U362CCPZ6srudURF90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "926754700265-d8t4jo1j572ku597iple78pt3mrd6npq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

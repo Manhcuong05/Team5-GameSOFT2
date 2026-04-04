@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -31,10 +32,7 @@ public class MenuManager : MonoBehaviour
 
     public void ShowStoreMenu()
     {
-        mainMenu.SetActive(false);
-        optionMenu.SetActive(false);
-        storeMenu.SetActive(true);
-        scoreMenu.SetActive(false);
+        SceneManager.LoadScene("Stores");
     }
 
     public void ShowScoreMenu()

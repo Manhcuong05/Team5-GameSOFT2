@@ -2,8 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
-public class MenuButtonEffect : MonoBehaviour
+public class MenuButtonEffect : MonoBehaviour, IPointerClickHandler
 {
     public Image image;
     public Sprite normalSprite;
@@ -12,19 +13,47 @@ public class MenuButtonEffect : MonoBehaviour
 
     public UnityEvent onClick;
 
+    private bool isProcessing = false;
+
+    void Start()
+    {
+        Debug.Log("Button READY: " + gameObject.name);
+    }
+
+    // 🔥 BẮT CLICK TRỰC TIẾP
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("CLICK DETECTED: " + gameObject.name);
+
+        OnButtonClick();
+    }
+
     public void OnButtonClick()
     {
-        StartCoroutine(PressRoutine());
+        Debug.Log("OnButtonClick CALLED");
+
+        if (!isProcessing)
+        {
+            StartCoroutine(PressRoutine());
+        }
     }
 
     IEnumerator PressRoutine()
     {
+        isProcessing = true;
+
+        Debug.Log("Start Press Effect");
+
         image.sprite = pressedSprite;
 
-        yield return new WaitForSeconds(pressTime);
+        yield return new WaitForSecondsRealtime(pressTime);
 
         image.sprite = normalSprite;
 
-        onClick.Invoke();
+        Debug.Log("Invoke Event");
+
+        onClick?.Invoke();
+
+        isProcessing = false;
     }
 }
