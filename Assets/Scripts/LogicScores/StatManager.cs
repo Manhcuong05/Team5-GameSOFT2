@@ -6,6 +6,14 @@ public class GameStatsTracker : MonoBehaviour
     private bool isPlaying = false;
     public static GameStatsTracker instance;
 
+    private const string TotalGamesKey = "TotalGames";
+    private const string HighScoreKey = "HighScore";
+    private const string LastScoreKey = "LastScore";
+    private const string TotalScoreKey = "TotalScore";
+    private const string TotalPlayTimeKey = "TotalPlayTime";
+    private const string LongestPlayTimeKey = "LongestPlayTime";
+    private const string LastPlayTimeKey = "LastPlayTime";
+
     void Awake()
     {
         if (instance == null)
@@ -42,15 +50,13 @@ public class GameStatsTracker : MonoBehaviour
     {
         isPlaying = false;
 
-        // ===== LOAD =====
-        int totalGames = PlayerPrefs.GetInt("TotalGames", 0);
-        int highScore = PlayerPrefs.GetInt("HighScore", 0);
-        int totalScore = PlayerPrefs.GetInt("TotalScore", 0);
+        int totalGames = PlayerPrefs.GetInt(TotalGamesKey, 0);
+        int highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
+        int totalScore = PlayerPrefs.GetInt(TotalScoreKey, 0);
 
-        float totalPlayTime = PlayerPrefs.GetFloat("TotalPlayTime", 0);
-        float longestPlayTime = PlayerPrefs.GetFloat("LongestPlayTime", 0);
+        float totalPlayTime = PlayerPrefs.GetFloat(TotalPlayTimeKey, 0);
+        float longestPlayTime = PlayerPrefs.GetFloat(LongestPlayTimeKey, 0);
 
-        // ===== UPDATE =====
         totalGames++;
         totalScore += score;
 
@@ -62,15 +68,30 @@ public class GameStatsTracker : MonoBehaviour
 
         totalPlayTime += playTime;
 
-        // ===== SAVE =====
-        PlayerPrefs.SetInt("TotalGames", totalGames);
-        PlayerPrefs.SetInt("HighScore", highScore);
-        PlayerPrefs.SetInt("LastScore", score);
-        PlayerPrefs.SetInt("TotalScore", totalScore);
+        PlayerPrefs.SetInt(TotalGamesKey, totalGames);
+        PlayerPrefs.SetInt(HighScoreKey, highScore);
+        PlayerPrefs.SetInt(LastScoreKey, score);
+        PlayerPrefs.SetInt(TotalScoreKey, totalScore);
 
-        PlayerPrefs.SetFloat("TotalPlayTime", totalPlayTime);
-        PlayerPrefs.SetFloat("LongestPlayTime", longestPlayTime);
-        PlayerPrefs.SetFloat("LastPlayTime", playTime);
+        PlayerPrefs.SetFloat(TotalPlayTimeKey, totalPlayTime);
+        PlayerPrefs.SetFloat(LongestPlayTimeKey, longestPlayTime);
+        PlayerPrefs.SetFloat(LastPlayTimeKey, playTime);
+
+        PlayerPrefs.Save();
+    }
+
+    public void ResetStats()
+    {
+        isPlaying = false;
+        playTime = 0f;
+
+        PlayerPrefs.DeleteKey(TotalGamesKey);
+        PlayerPrefs.DeleteKey(HighScoreKey);
+        PlayerPrefs.DeleteKey(LastScoreKey);
+        PlayerPrefs.DeleteKey(TotalScoreKey);
+        PlayerPrefs.DeleteKey(TotalPlayTimeKey);
+        PlayerPrefs.DeleteKey(LongestPlayTimeKey);
+        PlayerPrefs.DeleteKey(LastPlayTimeKey);
 
         PlayerPrefs.Save();
     }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5d082991802995a4da0f357c69438215
+guid: ff9c78f608cea9c4ca68ddb0b1203927
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -94,7 +94,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: Android
+    buildTarget: iPhone
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -107,7 +107,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: iPhone
+    buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -123,97 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: gametiles_X_0
+      name: 15k-product-on_X_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 846
-        width: 125
-        height: 33
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b60bb34684b8f934cab03c048f7068a2
-      internalID: -2083608045
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gametiles_X_1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 735
-        width: 124
-        height: 60
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fe99a81baeb9131488f48fd972f8c317
-      internalID: -49803202
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gametiles_X_2
-      rect:
-        serializedVersion: 2
-        x: 797
-        y: 801
-        width: 52
-        height: 31
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 48769bace6bd2c1429f114919f59b87d
-      internalID: -817420679
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gametiles_X_3
-      rect:
-        serializedVersion: 2
-        x: 798
-        y: 736
-        width: 51
-        height: 60
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f82c935d2fcd642448e4abf7e7373610
-      internalID: -668472101
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gametiles_X_4
-      rect:
-        serializedVersion: 2
-        x: 133
-        y: 838
-        width: 136
-        height: 186
+        y: 0
+        width: 164
+        height: 136
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,50 +137,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 02fe21ea397e49440aa0cc21a8eb08aa
-      internalID: 858204481
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gametiles_X_5
-      rect:
-        serializedVersion: 2
-        x: 670
-        y: 583
-        width: 119
-        height: 106
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1d5fe4947ee78fd42af3c395394f899e
-      internalID: -1897966269
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gametiles_X_6
-      rect:
-        serializedVersion: 2
-        x: 615
-        y: 932
-        width: 162
-        height: 92
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 76659cd00fd46ef4ca99a877321607e0
-      internalID: -1306208220
+      spriteID: c4e859fe695b8d8418e21e47e535783e
+      internalID: 2088048313
       vertices: []
       indices: 
       edges: []
@@ -280,13 +154,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      gametiles_X_0: -2083608045
-      gametiles_X_1: -49803202
-      gametiles_X_2: -817420679
-      gametiles_X_3: -668472101
-      gametiles_X_4: 858204481
-      gametiles_X_5: -1897966269
-      gametiles_X_6: -1306208220
+      15k-product-on_X_0: 2088048313
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
