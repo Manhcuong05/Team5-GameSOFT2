@@ -8,8 +8,14 @@ public class Spring : MonoBehaviour
     public float springForce = 16f;
 
     [Header("Sprites")]
-    public Sprite idleSprite;   // chưa chạm
-    public Sprite usedSprite;   // đã chạm
+    public Sprite idleSprite;
+    public Sprite usedSprite;
+
+    [Header("Sound")]
+    public AudioClip springSound;
+
+    [Range(0f, 3f)]
+    public float soundVolume = 1.5f;
 
     private bool isUsed = false;
     private SpriteRenderer sr;
@@ -17,7 +23,7 @@ public class Spring : MonoBehaviour
     private void Start()
     {
         sr = GetComponent<SpriteRenderer>();
-        sr.sprite = idleSprite; // set mặc định
+        sr.sprite = idleSprite;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -30,17 +36,25 @@ public class Spring : MonoBehaviour
         Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
         if (rb == null) return;
 
-        if (rb.velocity.y <= 0f && collision.transform.position.y > transform.position.y)
+        bool hitFromAbove = rb.velocity.y <= 0f &&
+                            collision.transform.position.y > transform.position.y;
+
+        if (!hitFromAbove) return;
+
+        isUsed = true;
+        sr.sprite = usedSprite;
+
+        if (springSound != null)
         {
-            isUsed = true;
-
-            // 👉 đổi sprite khi kích hoạt
-            sr.sprite = usedSprite;
-
-            player.Bounce(springForce);
-
-            // 👉 delay chút rồi destroy (để thấy animation)
-            Destroy(gameObject, 0.2f);
+            AudioSource.PlayClipAtPoint(
+                springSound,
+                Camera.main.transform.position,
+                soundVolume
+            );
         }
+
+        player.Bounce(springForce, false);
+
+        Destroy(gameObject, 0.2f);
     }
 }

@@ -19,6 +19,10 @@ public class Player : MonoBehaviour
     public Transform hatAnchor;
     public float propellerFlySpeed = 12f;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip bounceClip;
+
     private Rigidbody2D rb;
     private float movement;
 
@@ -30,13 +34,15 @@ public class Player : MonoBehaviour
     private bool hasStarted = false;
     private bool isGameOver = false;
 
-    // 👉 expose cho Pickup dùng
     public bool IsPropellerFlying => isPropellerFlying;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         originalGravityScale = rb.gravityScale;
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -83,7 +89,7 @@ public class Player : MonoBehaviour
 #endif
 
         WrapScreen();
-        CheckGameOver(); // ✅ FIX: gọi hàm này
+        CheckGameOver();
     }
 
     void FixedUpdate()
@@ -100,22 +106,34 @@ public class Player : MonoBehaviour
         rb.velocity = new Vector2(horizontal * movementSpeed, verticalVelocity);
     }
 
+    private void PlayBounceSound()
+    {
+        if (audioSource != null && bounceClip != null)
+        {
+            audioSource.PlayOneShot(bounceClip);
+        }
+    }
+
     public void Bounce()
     {
-        if (isPropellerFlying) return;
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-
-        // 👉 cộng điểm khi nhảy (tuỳ bạn chỉnh)
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.AddScore(10);
-        }
+        Bounce(jumpForce, true);
     }
 
     public void Bounce(float force)
     {
+        Bounce(force, true);
+    }
+
+    public void Bounce(float force, bool playSound)
+    {
         if (isPropellerFlying) return;
+
         rb.velocity = new Vector2(rb.velocity.x, force);
+
+        if (playSound)
+        {
+            PlayBounceSound();
+        }
 
         if (GameManager.Instance != null)
         {
@@ -123,7 +141,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // 🔥 không cho stack propeller
     public void ActivatePropeller(float duration, float flySpeed, GameObject hatVisualPrefab)
     {
         if (isPropellerFlying) return;
@@ -199,7 +216,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // ✅ FIX: thêm lại hàm này
     void CheckGameOver()
     {
         if (!hasStarted || Camera.main == null || isGameOver) return;
@@ -208,7 +224,7 @@ public class Player : MonoBehaviour
 
         if (transform.position.y < cameraY - 6f)
         {
-            isGameOver = true; // ⭐ CHẶN GỌI LẠI
+            isGameOver = true;
 
             if (GameManager.Instance != null)
             {

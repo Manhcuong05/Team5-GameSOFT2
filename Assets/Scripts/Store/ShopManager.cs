@@ -6,6 +6,11 @@ public class ShopManager : MonoBehaviour
 
     private ShopItem currentItem;
 
+    public ShopItem CurrentItem
+    {
+        get { return currentItem; }
+    }
+
     [Header("All Shop Items")]
     public ShopItem[] allItems;
 
@@ -95,15 +100,12 @@ public class ShopManager : MonoBehaviour
 
         if (currentItem.isOwned)
         {
-            Debug.Log("PLAY item: " + currentItem.itemName);
-            PlayerPrefs.SetString("SELECTED_ITEM", currentItem.itemName);
-            PlayerPrefs.Save();
+            currentItem.PlayScene();
             return true;
         }
 
         if (EggManager.instance == null)
         {
-            Debug.LogWarning("Không tìm thấy EggManager");
             return false;
         }
 
@@ -113,13 +115,10 @@ public class ShopManager : MonoBehaviour
         {
             currentItem.MarkAsOwned();
             RefreshAllItems();
-
-            Debug.Log("Mua thành công: " + currentItem.itemName);
             return true;
         }
         else
         {
-            Debug.Log("Không đủ trứng để mua: " + currentItem.itemName);
             currentItem.ShowInfo(GetCurrentEggs());
             return false;
         }

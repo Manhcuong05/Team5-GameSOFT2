@@ -3,12 +3,17 @@ using UnityEngine;
 public class MenuAutoJump : MonoBehaviour
 {
     public float jumpForce = 10f;
+    public AudioSource audioSource;
 
     Rigidbody2D rb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
         Jump();
     }
 
@@ -18,6 +23,11 @@ public class MenuAutoJump : MonoBehaviour
         {
             if (rb.velocity.y <= 0f)
             {
+                if (audioSource != null && audioSource.clip != null)
+                {
+                    audioSource.PlayOneShot(audioSource.clip);
+                }
+
                 Jump();
             }
         }

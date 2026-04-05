@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ShopItem : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class ShopItem : MonoBehaviour
     public string itemName;
     public int price;
 
+    [Header("Scene")]
+    public string sceneName;
+
     [Header("State")]
     public bool canBuy = true;
     public bool isOwned = false;
@@ -22,6 +26,9 @@ public class ShopItem : MonoBehaviour
     public TextMeshProUGUI itemNameText;
     public TextMeshProUGUI priceText;
     public Image pricePanelImage;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
 
     private Vector3 startPos;
     private Coroutine jumpLoop;
@@ -35,6 +42,9 @@ public class ShopItem : MonoBehaviour
     {
         startPos = transform.position;
         LoadOwnedState();
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
 
         if (pricePanel != null)
         {
@@ -53,10 +63,29 @@ public class ShopItem : MonoBehaviour
     {
         Debug.Log("[ShopItem] Click item world: " + itemName);
 
-        if (ShopManager.Instance != null)
+        if (ShopManager.Instance == null) return;
+
+        if (isOwned && ShopManager.Instance.CurrentItem == this)
         {
-            ShopManager.Instance.SelectItem(this);
+            PlayScene();
+            return;
         }
+
+        ShopManager.Instance.SelectItem(this);
+    }
+
+    public void PlayScene()
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogWarning("[ShopItem] Chưa gán sceneName cho item: " + itemName);
+            return;
+        }
+
+        PlayerPrefs.SetString("SELECTED_ITEM", itemName);
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene(sceneName);
     }
 
     public void StartJumpLoop()
@@ -94,6 +123,12 @@ public class ShopItem : MonoBehaviour
             }
 
             transform.position = startPos;
+
+            if (audioSource != null && audioSource.clip != null)
+            {
+                audioSource.PlayOneShot(audioSource.clip);
+            }
+
             yield return null;
         }
     }
