@@ -33,6 +33,11 @@ public class DevPanelUI : MonoBehaviour
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
+        if (AchievementTracker.Instance != null)
+        {
+            AchievementTracker.Instance.ResetAllAchievements();
+        }
+
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
@@ -78,7 +83,7 @@ public class DevPanelUI : MonoBehaviour
             ShopManager.Instance.ForceRefreshCurrentItemUI();
         }
 
-        Debug.Log("DevMode: Reset tất cả trạng thái đã mua item shop");
+        Debug.Log("DevMode: Reset all shop owned states");
     }
 
     public void ResetScoreAndStats()
@@ -110,5 +115,29 @@ public class DevPanelUI : MonoBehaviour
 
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ResetAchievements()
+    {
+        if (!enableDevMode) return;
+
+        if (AchievementTracker.Instance != null)
+        {
+            AchievementTracker.Instance.ResetAllAchievements();
+        }
+        else
+        {
+            PlayerPrefs.DeleteKey("achievement_jump_3");
+            PlayerPrefs.DeleteKey("achievement_jump_10");
+            PlayerPrefs.DeleteKey("achievement_score_100");
+            PlayerPrefs.DeleteKey("achievement_score_200");
+            PlayerPrefs.DeleteKey("achievement_combo_5");
+            PlayerPrefs.DeleteKey("achievement_height_100");
+            PlayerPrefs.DeleteKey("achievement_height_250");
+            PlayerPrefs.DeleteKey("achievement_survive_30");
+            PlayerPrefs.Save();
+        }
+
+        Debug.Log("DevMode: Reset all achievements");
     }
 }

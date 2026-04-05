@@ -48,6 +48,12 @@ public class Player : MonoBehaviour
     void Start()
     {
         SetupStartPosition();
+
+        if (AchievementTracker.Instance != null)
+        {
+            AchievementTracker.Instance.StartNewRun(transform);
+        }
+
         StartCoroutine(StartRoutine());
     }
 
@@ -139,6 +145,11 @@ public class Player : MonoBehaviour
         {
             GameManager.Instance.AddScore(10);
         }
+
+        if (AchievementTracker.Instance != null)
+        {
+            AchievementTracker.Instance.RegisterBounce();
+        }
     }
 
     public void ActivatePropeller(float duration, float flySpeed, GameObject hatVisualPrefab)
@@ -225,6 +236,14 @@ public class Player : MonoBehaviour
         if (transform.position.y < cameraY - 6f)
         {
             isGameOver = true;
+            rb.velocity = Vector2.zero;
+            rb.simulated = false;
+
+            if (AchievementTracker.Instance != null)
+            {
+                AchievementTracker.Instance.BreakCombo();
+                AchievementTracker.Instance.EndRun();
+            }
 
             if (GameManager.Instance != null)
             {
@@ -235,8 +254,22 @@ public class Player : MonoBehaviour
                     GameStatsTracker.instance.EndGame(score);
                 }
 
+                // hiện panel game over trước
                 GameManager.Instance.GameOver();
+
+                // rồi mới show ads
+                StartCoroutine(ShowInterstitialAfterDelay(0.7f));
             }
+        }
+    }
+
+    private IEnumerator ShowInterstitialAfterDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+
+        if (GameOverInterstitialADS.instance != null)
+        {
+            GameOverInterstitialADS.instance.ShowAd();
         }
     }
 }
