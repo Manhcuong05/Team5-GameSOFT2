@@ -4,8 +4,14 @@ using UnityEngine;
 public class PlatformSpawner : MonoBehaviour
 {
     [Header("References")]
-    public GameObject platformPrefab;
+    public GameObject normalPlatformPrefab;
+    public GameObject breakablePlatformPrefab;
     public Transform cameraTransform;
+
+    [Header("Platform Type Chance")]
+    [Range(0f, 1f)]
+    public float breakableChance = 0.10f;
+    public int noBreakableOnFirstPlatforms = 8;
 
     [Header("Spring Settings")]
     public GameObject springPrefab;
@@ -22,7 +28,7 @@ public class PlatformSpawner : MonoBehaviour
     public int noPropellerOnFirstPlatforms = 10;
 
     [Header("Initial Spawn")]
-    public int initialPlatformCount = 15;
+    public int initialPlatformCount = 28;
     public float startY = -4f;
 
     [Header("Spawn Range")]
@@ -30,16 +36,16 @@ public class PlatformSpawner : MonoBehaviour
     public float maxX = 2.5f;
 
     [Header("Vertical Spacing")]
-    public float minVerticalSpacing = 0.5f;
-    public float maxVerticalSpacing = 0.67f;
+    public float minVerticalSpacing = 0.22f;
+    public float maxVerticalSpacing = 0.35f;
 
     [Header("Spawn Ahead")]
     public float spawnAheadDistance = 10f;
 
     [Header("Anti Overlap Rules")]
-    public float minHorizontalGap = 1.2f;
-    public float minVerticalGap = 1.0f;
-    public int maxSpawnTries = 20;
+    public float minHorizontalGap = 0.45f;
+    public float minVerticalGap = 0.35f;
+    public int maxSpawnTries = 35;
 
     private float highestSpawnY;
     private List<Vector2> recentSpawnPositions = new List<Vector2>();
@@ -54,9 +60,9 @@ public class PlatformSpawner : MonoBehaviour
 
     private void Start()
     {
-        if (platformPrefab == null)
+        if (normalPlatformPrefab == null)
         {
-            Debug.LogError("PlatformSpawner: chưa gán platformPrefab.");
+            Debug.LogError("PlatformSpawner: chưa gán normalPlatformPrefab.");
             enabled = false;
             return;
         }
@@ -74,7 +80,6 @@ public class PlatformSpawner : MonoBehaviour
     private void Update()
     {
         if (cameraTransform == null) return;
-
         SpawnMorePlatformsIfNeeded();
     }
 
@@ -88,8 +93,9 @@ public class PlatformSpawner : MonoBehaviour
 
             bool allowSpring = i >= noSpringOnFirstPlatforms;
             bool allowPropeller = i >= noPropellerOnFirstPlatforms;
+            bool allowBreakable = i >= noBreakableOnFirstPlatforms;
 
-            SpawnPlatform(spawnPos, allowSpring, allowPropeller);
+            SpawnPlatform(spawnPos, allowSpring, allowPropeller, allowBreakable);
 
             currentY += Random.Range(minVerticalSpacing, maxVerticalSpacing);
         }
@@ -104,7 +110,7 @@ public class PlatformSpawner : MonoBehaviour
             highestSpawnY += Random.Range(minVerticalSpacing, maxVerticalSpacing);
 
             Vector2 spawnPos = GetValidSpawnPosition(highestSpawnY);
-            SpawnPlatform(spawnPos, true, true);
+            SpawnPlatform(spawnPos, true, true, true);
         }
     }
 
@@ -140,12 +146,12 @@ public class PlatformSpawner : MonoBehaviour
                 return false;
             }
 
-            if (dy < 0.8f && dx < minHorizontalGap)
+            if (dy < 0.35f && dx < 0.45f)
             {
                 return false;
             }
 
-            if (dx < 0.6f && dy < minVerticalGap)
+            if (dx < 0.25f && dy < 0.30f)
             {
                 return false;
             }
@@ -154,39 +160,50 @@ public class PlatformSpawner : MonoBehaviour
         return true;
     }
 
-    void SpawnPlatform(Vector2 spawnPosition, bool allowSpring, bool allowPropeller)
+    void SpawnPlatform(Vector2 spawnPosition, bool allowSpring, bool allowPropeller, bool allowBreakable)
     {
-        GameObject spawnedPlatform = Instantiate(platformPrefab, spawnPosition, Quaternion.identity);
+        GameObject prefabToSpawn = normalPlatformPrefab;
 
-        TrySpawnSpring(spawnedPlatform, allowSpring);
-        TrySpawnPropeller(spawnedPlatform, allowPropeller);
+        if (allowBreakable && breakablePlatformPrefab != null && Random.value <= breakableChance)
+        {
+            prefabToSpawn = breakablePlatformPrefab;
+        }
+
+        GameObject spawnedPlatform = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+
+        bool isBreakablePlatform = prefabToSpawn == breakablePlatformPrefab;
+
+        if (!isBreakablePlatform)
+        {
+            TrySpawnSingleItem(spawnedPlatform, allowSpring, allowPropeller);
+        }
 
         recentSpawnPositions.Add(spawnPosition);
 
-        if (recentSpawnPositions.Count > 10)
+        if (recentSpawnPositions.Count > 12)
         {
             recentSpawnPositions.RemoveAt(0);
         }
     }
 
-    void TrySpawnSpring(GameObject spawnedPlatform, bool allowSpring)
+    void TrySpawnSingleItem(GameObject spawnedPlatform, bool allowSpring, bool allowPropeller)
     {
-        if (!allowSpring) return;
-        if (springPrefab == null) return;
+        if (spawnedPlatform == null) return;
 
-        if (Random.value <= springChance)
+        bool canSpawnSpring = allowSpring && springPrefab != null;
+        bool canSpawnPropeller = allowPropeller && propellerPickupPrefab != null;
+
+        if (!canSpawnSpring && !canSpawnPropeller) return;
+
+        // Chỉ cho phép tối đa 1 vật phẩm trên 1 nền
+        if (canSpawnSpring && Random.value <= springChance)
         {
             Vector3 springSpawnPos = spawnedPlatform.transform.position + springOffset;
             Instantiate(springPrefab, springSpawnPos, Quaternion.identity, spawnedPlatform.transform);
+            return;
         }
-    }
 
-    void TrySpawnPropeller(GameObject spawnedPlatform, bool allowPropeller)
-    {
-        if (!allowPropeller) return;
-        if (propellerPickupPrefab == null) return;
-
-        if (Random.value <= propellerChance)
+        if (canSpawnPropeller && Random.value <= propellerChance)
         {
             Vector3 propellerSpawnPos = spawnedPlatform.transform.position + propellerOffset;
             Instantiate(propellerPickupPrefab, propellerSpawnPos, Quaternion.identity, spawnedPlatform.transform);
